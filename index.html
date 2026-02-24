@@ -123,6 +123,16 @@
     });
   }
 </script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      // Use the exact filename you have in GitHub
+      navigator.serviceWorker.register('/pwabuilder-sw.js')
+        .then(reg => console.log('SnapOCR SW Registered!', reg))
+        .catch(err => console.log('SW Registration failed:', err));
+    });
+  }
+</script>
 
 </body>
 </html>
