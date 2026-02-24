@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Link to Manifest -->
-<link rel="manifest" href="manifest.json">
-<!-- Theme color for mobile browser bar -->
-<meta name="theme-color" content="#0b1d4d">
-<!-- iOS support -->
-<link rel="apple-touch-icon" href="icon-192.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <!-- Link to Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <!-- Theme color for mobile browser bar -->
+  <meta name="theme-color" content="#0b1d4d">
+  <!-- iOS support -->
+  <link rel="apple-touch-icon" href="icon-192.png">
   <title>SnapOCR - Secure Access</title>
   <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/6.6.0/gradio.js"></script>
   <style>
@@ -114,5 +114,15 @@
 
     document.addEventListener("DOMContentLoaded", initializeSecureContent);
   </script>
+  <script>
+  if ('service worker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('Service Worker registered!', reg))
+        .catch(err => console.log('Service Worker failed:', err));
+    });
+  }
+</script>
+
 </body>
 </html>
