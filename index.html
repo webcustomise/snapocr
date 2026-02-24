@@ -3,28 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <!-- Link to Manifest -->
-  <link rel="manifest" href="manifest.json">
-  <!-- Theme color for mobile browser bar -->
+  <!-- Link to Manifest with relative path for GitHub Pages -->
+  <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0b1d4d">
-  <!-- iOS support -->
-  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  
   <title>SnapOCR - Secure Access</title>
+  
   <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/6.6.0/gradio.js"></script>
+  
   <style>
-    body { font-family: 'Roboto', sans-serif; background-color: #f2f4f6; }
+    body { font-family: 'Roboto', sans-serif; background-color: #0b1d4d; color: white; margin: 0; overflow-x: hidden; }
     .loading-container {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
       display: flex; flex-direction: column;
       justify-content: center; align-items: center;
-      background-color: #f2f4f6;
+      background-color: #0b1d4d;
       z-index: 9999;
     }
     .spinner {
-      border: 4px solid rgba(0, 0, 0, 0.1);
-      border-top: 4px solid #0F9D58;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-top: 4px solid #2563eb;
       border-radius: 50%;
       width: 40px; height: 40px;
       animation: spin 1s linear infinite;
@@ -33,23 +34,41 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    gradio-app {
-      width: 100% !important;
-      min-height: 100vh !important;
-      border: none;
-    }
+    #app-content { width: 100%; min-height: 100vh; }
+    gradio-app { width: 100% !important; min-height: 100vh !important; border: none; }
   </style>
 </head>
 <body>
-  <!-- Loader -->
-  <div id="loader" class="loading-container">
-    <div class="spinner mb-4"></div>
-    <h1 class="text-xl text-gray-700">Processing Highly Secured Content...</h1>
-    <p class="text-sm text-red-500 mt-4" id="error-message"></p>
+
+  <!-- Main Container (Prevents document.write from clearing the PWA logic) -->
+  <div id="app-content">
+    <div id="loader" class="loading-container">
+      <div class="spinner"></div>
+      <h1 style="font-size: 1.2rem; margin-top: 20px;">Processing Highly Secured Content...</h1>
+      <p id="error-message" style="color: #ff4444; font-size: 0.9rem; margin-top: 10px;"></p>
+    </div>
   </div>
 
   <script>
-    // --- Secured by SudoHat Advanced Protection System ---
+    // --- 1. Service Worker Registration ---
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./pwabuilder-sw.js')
+          .then(reg => console.log('SnapOCR PWA Ready'))
+          .catch(err => console.log('PWA Registration failed:', err));
+      });
+    }
+
+    // --- 2. Silent Copy Listener (Bypasses Domain Popup) ---
+    window.addEventListener('message', function(event) {
+        if (event.data.type === 'copy') {
+            navigator.clipboard.writeText(event.data.text)
+                .then(() => console.log("Copied Silently"))
+                .catch(err => console.error("Copy Failed", err));
+        }
+    });
+
+    // --- 3. SudoHat Secure Decryption Logic ---
     const SECURE_KEY = 27;
     const MODULATION_FACTOR = 36;
     const CHAR_SET = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -60,17 +79,14 @@
       const reverseKey = -key;
       const lowerCharset = charset.toLowerCase();
       let output = "";
-
       for (let i = 0; i < input.length; i++) {
         let char = input.charAt(i);
         const lowerChar = char.toLowerCase();
         const position = lowerCharset.indexOf(lowerChar);
-
         if (position !== -1) {
           const wasEncryptedCharUpperCase = (char >= 'A' && char <= 'Z');
           let newPosition = (position + reverseKey) % mod;
           if (newPosition < 0) newPosition += mod;
-
           let decryptedChar = lowerCharset[newPosition];
           if (wasEncryptedCharUpperCase && (decryptedChar >= 'a' && decryptedChar <= 'z')) {
             char = decryptedChar.toUpperCase();
@@ -85,15 +101,14 @@
 
     async function initializeSecureContent() {
       const errorDisplay = document.getElementById("error-message");
+      const appContainer = document.getElementById("app-content");
       const resourcePath = PROTECTED_RESOURCE_PATH + TARGET_RESOURCE;
 
       try {
         const response = await fetch(resourcePath);
-        if (!response.ok) {
-          throw new Error(`Failed to access secure resource ${resourcePath}. Status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`Status: ${response.status}`);
+        
         const securedContent = await response.text();
-
         const processedContent = secureContentProcessor(
           securedContent.trim(),
           SECURE_KEY,
@@ -101,38 +116,16 @@
           CHAR_SET
         );
 
-        // Replace loader with decrypted content
-        document.open();
-        document.write(processedContent);
-        document.close();
+        // Update the innerHTML instead of document.write to keep the PWA/Copy scripts alive
+        appContainer.innerHTML = processedContent;
+        
       } catch (error) {
-        console.error("SudoHat Protection Error:", error);
-        errorDisplay.textContent = "Secure Content Processing Failed. Contact SudoHat Security Team.";
-        document.getElementById("loader").style.backgroundColor = "#fce8e8";
+        console.error("Protection Error:", error);
+        errorDisplay.textContent = "Secure Content Processing Failed. Check Connection.";
       }
     }
 
     document.addEventListener("DOMContentLoaded", initializeSecureContent);
   </script>
-  <script>
-  if ('service worker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log('Service Worker registered!', reg))
-        .catch(err => console.log('Service Worker failed:', err));
-    });
-  }
-</script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      // Use the exact filename you have in GitHub
-      navigator.serviceWorker.register('/pwabuilder-sw.js')
-        .then(reg => console.log('SnapOCR SW Registered!', reg))
-        .catch(err => console.log('SW Registration failed:', err));
-    });
-  }
-</script>
-
 </body>
 </html>
