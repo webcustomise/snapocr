@@ -1,8 +1,0 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "com.genzomate.snapocr",
-        "sha256_cert_fingerprints": ["1F:26:AE:A1:D4:B1:5C:C7:6F:C6:E0:70:9A:79:32:F0:03:26:8C:2E:04:15:2A:F0:77:47:FB:2C:01:DE:97:DB"]
-      }
-    }]
