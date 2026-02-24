@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapOCR - Secure Access</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Gradio Script will be injected dynamically or kept here -->
+    <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/6.6.0/gradio.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #f2f4f6; }
+        
+        /* SudoHat Loader Styles */
+        .loading-container { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            display: flex; flex-direction: column; justify-content: center; 
+            align-items: center; background-color: #f2f4f6; z-index: 9999;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #0F9D58;
+            border-radius: 50%; width: 40px; height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Gradio Fullscreen Fix */
+        gradio-app { width: 100% !important; min-height: 100vh !important; border: none; }
+    </style>
+</head>
+<body>
+    <div id="loader" class="loading-container">
+        <div class="spinner mb-4"></div>
+        <h1 class="text-xl text-gray-700">Verifying SudoHat Credentials...</h1>
+        <p class="text-sm text-red-500 mt-4" id="error-message"></p>
+    </div>
+
+    <div id="app-container"></div>
+
+    <script>
+      const SECURE_KEY = 27; 
+      const MODULATION_FACTOR = 36;
+      const CHAR_SET = "abcdefghijklmnopqrstuvwxyz0123456789";
+      const PROTECTED_RESOURCE_PATH = "hid/"; 
+      const TARGET_RESOURCE = 'log.txt'; 
+
+      function secureContentProcessor(input, key, mod, charset) {
+          const reverseKey = -key;
+          const lowerCharset = charset.toLowerCase();
+          let output = "";
+          for (let i = 0; i < input.length; i++) {
+              let char = input.charAt(i);
+              const lowerChar = char.toLowerCase();
+              const position = lowerCharset.indexOf(lowerChar);
+              if (position !== -1) {
+                  const wasEncryptedCharUpperCase = (char >= 'A' && char <= 'Z');
+                  let newPosition = (position + reverseKey) % mod;
+                  if (newPosition < 0) { newPosition += mod; }
+                  let decryptedChar = lowerCharset[newPosition];
+                  if (wasEncryptedCharUpperCase && (decryptedChar >= 'a' && decryptedChar <= 'z')) {
+                      char = decryptedChar.toUpperCase();
+                  } else { char = decryptedChar; }
+              }
+              output += char;
+          }
+          return output;
+      }
+
+      async function initializeSecureContent() {
+          const errorDisplay = document.getElementById("error-message");
+          const resourcePath = PROTECTED_RESOURCE_PATH + TARGET_RESOURCE;
+          try {
+              const response = await fetch(resourcePath);
+              if (!response.ok) throw new Error(`Access Denied.`);
+              
+              const securedContent = await response.text();
+              const processedContent = secureContentProcessor(
+                  securedContent.trim(),
+                  SECURE_KEY, 
+                  MODULATION_FACTOR, 
+                  CHAR_SET
+              );
+
+              // Inject the decrypted Gradio component
+              document.getElementById('app-container').innerHTML = processedContent;
+              
+              // Hide loader once Gradio starts mounting
+              setTimeout(() => {
+                  document.getElementById("loader").style.display = "none";
+                  document.body.style.overflow = "auto";
+              }, 1000);
+
+          } catch (error) {
+              errorDisplay.textContent = `Secure Content Processing Failed.`;
+              document.getElementById("loader").style.backgroundColor = '#fce8e8';
+          }
+      }
+
+      document.addEventListener("DOMContentLoaded", initializeSecureContent);
+    </script>
+</body>
+</html>
