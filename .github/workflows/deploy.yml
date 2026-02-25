@@ -1,1 +1,14 @@
+name: Deploy SnapOCR to GitHub Pages
 
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to GitHub Pages
+        run: echo "Workflow will move .well-known and deploy"
