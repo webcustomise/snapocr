@@ -3,12 +3,30 @@ name: Deploy SnapOCR to GitHub Pages
 on:
   push:
     branches:
-      - main
+      - main  # runs on push to main branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Check out your repo
       - uses: actions/checkout@v3
+
+      # Step 2: Prepare deployment folder
+      - name: Prepare deployment
+        run: |
+          mkdir out
+          cp -r ./* out/
+          # Move public/.well-known to root for assetlinks.json
+          if [ -d out/public/.well-known ]; then
+            mv out/public/.well-known out/.well-known
+          fi
+
+      # Step 3: Deploy to gh-pages using peaceiris action
       - name: Deploy to GitHub Pages
-        run: echo "Workflow will move .well-known and deploy"
+        uses: peaceiris/actions-gh-pages@v6
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./out
+          publish_branch: gh-pages
