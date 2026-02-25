@@ -2,7 +2,7 @@
       "relation": ["delegate_permission/common.handle_all_urls"],
       "target": {
         "namespace": "android_app",
-        "package_name": "com.genzomate.snapocr",
-        "sha256_cert_fingerprints": ["57:7F:F4:F6:96:55:50:B4:34:2E:04:A5:AA:DE:03:E3:8B:00:0F:7A:6F:7B:2F:F0:33:B9:65:B2:54:91:C3:70"]
+        "package_name": "io.github.webcustomise.twa",
+        "sha256_cert_fingerprints": ["75:F7:68:17:7E:6E:91:1F:C8:F1:A6:06:BC:B2:3A:94:4A:7B:52:C8:E1:B0:AD:5C:28:6F:F6:B5:0B:1E:F1:99"]
       }
     }]
