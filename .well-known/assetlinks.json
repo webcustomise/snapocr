@@ -1,8 +1,12 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "io.github.webcustomise.twa",
-        "sha256_cert_fingerprints": ["75:F7:68:17:7E:6E:91:1F:C8:F1:A6:06:BC:B2:3A:94:4A:7B:52:C8:E1:B0:AD:5C:28:6F:F6:B5:0B:1E:F1:99"]
-      }
-    }]
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.webcustomise.twa",
+      "sha256_cert_fingerprints": [
+        "D1:4C:D2:5E:49:6E:9B:F0:C9:F5:3E:C8:7A:BB:AE:A7:2D:2F:E4:2E:70:33:C1:7D:6D:46:A1:D0:CD:E3:3F:88"
+      ]
+    }
+  }
+]
