@@ -1,9 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Terminated</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: #1e293b;
+            padding: 30px 20px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #ff4d4d;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 16px;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #ff4d4d;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:hover {
+            background-color: #e60000;
+        }
+
+        /* Larger screens */
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 28px;
+            }
+            p {
+                font-size: 17px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Developer Terminated Access</h1>
+        <p>Your access to this application has been revoked. Please contact the administrator if you believe this is an error.</p>
+        <button class="btn" onclick="location.reload()">Refresh</button>
+    </div>
+
+</body>
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Link to Manifest with relative path for GitHub Pages -->
+
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0b1d4d">
   <link rel="apple-touch-icon" href="./icon-192.png">
@@ -40,7 +129,6 @@
 </head>
 <body>
 
-  <!-- Main Container (Prevents document.write from clearing the PWA logic) -->
   <div id="app-content">
     <div id="loader" class="loading-container">
       <div class="spinner"></div>
@@ -50,7 +138,7 @@
   </div>
 
   <script>
-    // --- 1. Service Worker Registration ---
+  
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./pwabuilder-sw.js')
@@ -58,8 +146,6 @@
           .catch(err => console.log('PWA Registration failed:', err));
       });
     }
-
-    // --- 2. Silent Copy Listener (Bypasses Domain Popup) ---
     window.addEventListener('message', function(event) {
         if (event.data.type === 'copy') {
             navigator.clipboard.writeText(event.data.text)
@@ -68,7 +154,6 @@
         }
     });
 
-    // --- 3. SudoHat Secure Decryption Logic ---
     const SECURE_KEY = 27;
     const MODULATION_FACTOR = 36;
     const CHAR_SET = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -116,7 +201,6 @@
           CHAR_SET
         );
 
-        // Update the innerHTML instead of document.write to keep the PWA/Copy scripts alive
         appContainer.innerHTML = processedContent;
         
       } catch (error) {
@@ -128,4 +212,4 @@
     document.addEventListener("DOMContentLoaded", initializeSecureContent);
   </script>
 </body>
-</html>
+</html> -->
